@@ -48,7 +48,7 @@ class Epoll {
             SetNonBlocking( fd ); //设置非阻塞
         }
 
-        void CreateTcpSocket(char * argv[])  {  //创建和子服务器链接的TCP SOCKET
+        void CreateTcpSocket(char * argv[])  {  //创建和客户端链接的TCP SOCKET
             const char * ip = argv[1];
             int port = atoi( argv[2] );
             struct sockaddr_in address; //创建地址协议信息
@@ -68,6 +68,7 @@ class Epoll {
             }
             if( (listen( TCPSocketFd , LISTENNUM )) == -1 )  { //监听该套接字，并判断是否成功
                 std::cout << "Tcp Socket Listen Error!" << std::endl;
+                return;
             }
 
         }
@@ -107,6 +108,9 @@ int main( int argc , char * argv[] )  {
                 struct sockaddr_in client_address;
                 socklen_t client_addrlength = sizeof( client_address );
                 int connfd = accept( e.TCPSocketFd , ( struct sockaddr*)&client_address , &client_addrlength);
+                if( connfd >= 0 )  {
+                    std::cout << connfd << "already connect!" << std::endl;
+                }
                 e.addfd(e.epollfd , connfd);
             }
             else if( e.events[i].events & EPOLLIN )  {
