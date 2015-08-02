@@ -31,7 +31,6 @@
 #define LISTEN_NUMBER 1024
 
 const int MaxTaskCount = 1000;
-
 class Epoll{
     public:
         Epoll(char * ip , char * port):epollfd(-1) , ServerIP(ip) , Port(port)  {}
@@ -276,7 +275,7 @@ class Mission{
                         socklen_t client_addrlength = sizeof( client_address );
                         int connfd = accept( e.socketfd , (struct sockaddr *)&client_address , &client_addrlength);
                         if( connfd >= 0 )  {
-                            std::cout << connfd << "already connect!" << std::endl;
+                            std::cout << "Already connect!" << std::endl;
                         }
                         e.addfd(e.epollfd , connfd);
                     }
@@ -302,10 +301,10 @@ class Mission{
                             }
                         }
                     }
-                    close(e.socketfd);
 
                 }
-            }
+
+            }close(e.socketfd);
         }
 
     private:

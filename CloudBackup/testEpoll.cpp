@@ -26,6 +26,22 @@
 #include<condition_variable>
 #include<atomic>
 
+void receiveMessage(int ClientSocket) {
+    char receiveBuf[1024];
+    while(1) {
+    recv(ClientSocket , (void *)&receiveBuf , sizeof(receiveBuf) , 0);
+    std::cout << receiveBuf << std::endl;
+    }
+}
+
+void sendMessage(int ClientSocket)  {
+    char sendBuf[1024];
+    while(1) {
+        std::cin >> sendBuf;
+        send(ClientSocket , sendBuf , strlen(sendBuf) , 0);
+    }
+}
+
 int main(int argc , char * argv[]) {
     int ClientSocket = socket(AF_INET , SOCK_STREAM , 0);
     struct sockaddr_in servaddr;
@@ -41,12 +57,11 @@ int main(int argc , char * argv[]) {
         return -1;
     }
 
-    char sendbuf[1024];
-    while(1)  {
-        std::cin >> sendbuf;
-        send(ClientSocket , sendbuf , strlen(sendbuf) , 0);
-    }
+    std::thread sendTd(sendMessage , ClientSocket);
+    std::thread recvTd(receiveMessage , ClientSocket);
 
+    sendTd.join();
+    recvTd.join();
     return 0;
 }
 
